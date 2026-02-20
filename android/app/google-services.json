@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "474543758858",
+    "project_id": "offlinequeue-535e0",
+    "storage_bucket": "offlinequeue-535e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474543758858:android:4c9d508de68690c52809f3",
+        "android_client_info": {
+          "package_name": "com.example.offline_queue"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNY-nka5ALVVJo422I4ndVgj7QdSqv15A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
