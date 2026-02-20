@@ -2,6 +2,25 @@ OfflineQueue - Flutter Offline-First Notes App
 
 A Flutter application demonstrating offline-first architecture with local SQLite storage and cloud synchronization using Firebase Firestore. This app allows users to create notes offline and automatically syncs them when connectivity is restored.
 
+1.Prompt
+
+
+How to design an offline-first sync queue in Flutter using Hive? I need persistent queue storage, retry support, idempotency handling,and durability across app restarts. The queue should support add_note and update_note actions.
+
+
+2.Prompt (Iteration)
+
+
+How can I prevent duplicate writes when retrying offline sync operations in Firestore?I need idempotent behavior for add_note actions.
+
+
+3.Prompt
+
+
+What is a simple retry mechanism suitable for a mobile offline sync queue? I want to avoid battery drain and infinite retries.
+
+
+
 📱 Features
 Offline-First Architecture: Create and view notes without an internet connection
 
@@ -85,3 +104,7 @@ Firebase Core: Firebase initialization
 Cloud Firestore: Cloud database
 connectivity_plus: Network connectivity detection
 path: Database path management
+
+
+
+
