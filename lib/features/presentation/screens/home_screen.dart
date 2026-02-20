@@ -73,6 +73,124 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> _deleteNote(NoteModel note) async {
+    // Show confirmation dialog
+    final confirm = await _showDeleteConfirmationDialog(note);
+
+    if (confirm) {
+      setState(() {
+        isLoading = true;
+      });
+
+      try {
+        await repo.deleteNote(note.id!);
+
+        // Remove from local lists
+        setState(() {
+          notes.removeWhere((n) => n.id == note.id);
+          filterNotes();
+        });
+      } catch (e) {
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<bool> _showDeleteConfirmationDialog(NoteModel note) async {
+    return await showDialog(
+          context: context,
+          builder: (context) => Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Warning icon
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.delete_outline_rounded,
+                      color: Colors.red,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Title
+                  const Text(
+                    'Delete Note',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Message
+                  Text(
+                    'Are you sure you want to delete "${note.title}"?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text('Cancel'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text('Delete'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,8 +205,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: SafeArea(
           child: Column(
             children: [
-              SizedBox(height: 10,),
-              Expanded(child: isGridView ? _buildGridView() : _buildListView()),
+              SizedBox(height: 10),
+              Expanded(
+                child: filteredNotes.isEmpty
+                    ? _buildEmptyState()
+                    : isGridView
+                    ? _buildGridView()
+                    : _buildListView(),
+              ),
             ],
           ),
         ),
@@ -126,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             });
           },
           icon: const Icon(Icons.add_rounded),
-          label:  Text('New'),
+          label: Text('New'),
           backgroundColor: Colors.white,
           foregroundColor: Colors.blue,
           elevation: 8,
@@ -151,10 +275,51 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             note: note,
             index: index,
             onTap: () => _showNoteDetail(note),
-            onDelete: () {},
+            onDelete: () => _deleteNote(note),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.note_alt_outlined,
+              size: 64,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'No notes yet',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            searchQuery.isEmpty
+                ? 'Tap the + button to create your first note'
+                : 'No notes match your search',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.7),
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -174,7 +339,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           note: note,
           index: index,
           onTap: () => _showNoteDetail(note),
-          onDelete: () {},
+          onDelete: () => _deleteNote(note),
         );
       },
     );
