@@ -87,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: SafeArea(
           child: Column(
             children: [
+              SizedBox(height: 10,),
               Expanded(child: isGridView ? _buildGridView() : _buildListView()),
             ],
           ),
@@ -125,12 +126,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             });
           },
           icon: const Icon(Icons.add_rounded),
-          label: const Text('New Note'),
+          label:  Text('New'),
           backgroundColor: Colors.white,
           foregroundColor: Colors.blue,
           elevation: 8,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
           ),
         ),
       ),
@@ -144,11 +145,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       itemCount: filteredNotes.length,
       itemBuilder: (context, index) {
         final note = filteredNotes[index];
-        return NoteCard(
-          note: note,
-          index: index,
-          onTap: () => _showNoteDetail(note),
-          onDelete: () {},
+        return Padding(
+          padding: EdgeInsetsGeometry.symmetric(vertical: 10),
+          child: NoteCard(
+            note: note,
+            index: index,
+            onTap: () => _showNoteDetail(note),
+            onDelete: () {},
+          ),
         );
       },
     );
